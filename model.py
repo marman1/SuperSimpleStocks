@@ -8,8 +8,7 @@ def to_int(func):
     def wrapper(date_time):
         # Check if the input is a datetime object
         if not isinstance(date_time, datetime):
-            raise TypeError('date_time must be a datetime object')
-        
+            raise TypeError('date_time must be a datetime object')      
         # Convert the datetime object to an integer representing the timestamp
         return func(int(date_time.timestamp()))
     return wrapper
@@ -50,14 +49,14 @@ class Trade:
         
 class Stock:
     # Represents a stock in a stock exchange.
-
     # Attributes:
     #     symbol: The ticker symbol of the stock.
     #     stock_type: The type of stock ('Common' or 'Preferred').
     #     last_dividend: The last dividend paid by the stock.
     #     fixed_dividend: The fixed dividend for Preferred stock (only applicable if stock_type is 'Preferred').
     #     par_value: The par value of the stock (only applicable if stock_type is 'Preferred').
-    #     trades: A priority queue of Trade objects for the stock. The priority queue is implemented using headq ((priority : int of timestamp, value : the Trade object))
+    #     trades: A priority queue of Trade objects for the stock. 
+    #             The priority queue is implemented using headq ((priority : int of timestamp, value : the Trade object))
         
     def __init__(self, symbol, stock_type, last_dividend, fixed_dividend, par_value):
         # Validate the stock_type
@@ -123,7 +122,7 @@ class Stock:
         now = datetime.now()
         fifteen_minutes_ago = now - timedelta(minutes=15)
         
-        ## Initialize relevant_trades and original_trades_copy in order to preserve the trades object
+        # Initialize relevant_trades and original_trades_copy in order to preserve the trades object
         relevant_trades = []
         original_trades_copy = copy.deepcopy(self.trades)
         
@@ -152,7 +151,6 @@ class Stock:
 
 class GBCE:
     # Represents the Global Baltic Composite Exchange (GBCE).
-
     # Attributes:
     #     stocks: A list of Stock objects.
     
@@ -161,9 +159,8 @@ class GBCE:
 
     def add_stock(self, stock):
         self.stocks.append(stock)
-    
 
-    #Calculates the All-Share Index of the GBCE using geommetric mean
+    #Calculates the All-Share Index of the GBCE using geometric mean
     def calculate_all_share_index(self):
         prices = [stock.calculate_volume_weighted_stock_price() for stock in self.stocks if stock.calculate_volume_weighted_stock_price() != 0]
 
