@@ -93,7 +93,7 @@ class TestStockCalculator(unittest.TestCase):
 
         # PE ratio for a stock
         pe_ratio_pop = self.pop.calculate_pe_ratio(price)
-        expected_ratio_pop = price / self.pop.last_dividend
+        expected_ratio_pop = price / self.pop.last_dividend # The last divident will have been updated as the the calculate_dividend_yield has been called.
         self.assertEqual(pe_ratio_pop, expected_ratio_pop)
         # PE ratio for a stock
         pe_ratio_ale = self.ale.calculate_pe_ratio(price)
@@ -148,13 +148,14 @@ class TestStockCalculator(unittest.TestCase):
         self.assertEqual(last_trade.buy_sell, 'sell')
         self.assertEqual(last_trade.price, traded_price)
         
-        # Record a valid buy trade for Common stock
-        self.tea.record_trade(timestamp_now, quantity, 'buy', traded_price)
+        # Record a valid buy trade for Common stock for 0 price (to cover case of Bankruptcy)
+        zero_price = 0
+        self.tea.record_trade(timestamp_now, quantity, 'buy', zero_price)
         last_trade = self.tea.trades[0][1]  # Get the last trade object (root of the trades priority queue)
         self.assertEqual(last_trade.timestamp, timestamp_now)
         self.assertEqual(last_trade.quantity, quantity)
         self.assertEqual(last_trade.buy_sell, 'buy')
-        self.assertEqual(last_trade.price, traded_price)
+        self.assertEqual(last_trade.price, zero_price)
     
         # Adding trade with invalid buy/sell indicator
         with self.assertRaises(ValueError) as context:
@@ -176,11 +177,6 @@ class TestStockCalculator(unittest.TestCase):
             self.tea.record_trade(timestamp_now, 15, 'buy', -125)
         self.assertEqual(str(context.exception), "Price must be a positive number")
 
-        # Adding trade with zero traded price
-        with self.assertRaises(ValueError):
-            self.tea.record_trade(timestamp_now, 10, 'sell', 0)
-        self.assertEqual(str(context.exception), "Price must be a positive number")
-    
         
     def test_calculate_all_share_index(self):
         # GBCE index multiple stocks with varying prices
